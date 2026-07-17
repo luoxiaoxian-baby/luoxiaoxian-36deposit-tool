@@ -1,0 +1,860 @@
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+:root {
+    --primary: #0d9488;
+    --primary-dark: #0f766e;
+    --primary-light: #ccfbf1;
+    --accent: #f59e0b;
+    --success: #10b981;
+    --danger: #ef4444;
+    --warning: #f59e0b;
+    --bg: #f0fdfa;
+    --card-bg: #ffffff;
+    --border: #e2e8f0;
+    --text: #134e4a;
+    --text-secondary: #64748b;
+    --shadow: 0 1px 3px rgba(0, 0, 0, 0.08);
+    --shadow-lg: 0 10px 25px -5px rgba(13, 148, 136, 0.15);
+}
+
+body {
+    font-family: 'Noto Sans SC', system-ui, -apple-system, BlinkMacSystemFont, sans-serif;
+    background-color: var(--bg);
+    color: var(--text);
+    min-height: 100vh;
+    line-height: 1.5;
+}
+
+#app {
+    max-width: 960px;
+    margin: 0 auto;
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+}
+
+.header {
+    background-color: var(--card-bg);
+    border-bottom: 1px solid var(--border);
+    padding: 16px 20px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    position: sticky;
+    top: 0;
+    z-index: 100;
+}
+
+.brand h1 {
+    font-family: 'Noto Serif SC', serif;
+    font-size: 22px;
+    font-weight: 700;
+    color: var(--text);
+}
+
+.subtitle {
+    font-size: 12px;
+    color: var(--text-secondary);
+    margin-left: 2px;
+}
+
+.header-actions {
+    display: flex;
+    gap: 8px;
+    flex-wrap: wrap;
+    justify-content: flex-end;
+}
+
+.main-content {
+    flex: 1;
+    padding: 20px;
+}
+
+/* 资金规划备注 */
+.plan-card {
+    background-color: var(--card-bg);
+    border-radius: 12px;
+    padding: 16px 20px;
+    box-shadow: var(--shadow);
+    margin-bottom: 20px;
+}
+
+.plan-card summary {
+    font-weight: 600;
+    cursor: pointer;
+    color: var(--primary-dark);
+    outline: none;
+}
+
+.plan-body {
+    margin-top: 12px;
+    font-size: 13px;
+    color: var(--text-secondary);
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+}
+
+.plan-body strong {
+    color: var(--text);
+}
+
+/* 统计卡片 */
+.stats-grid {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 12px;
+    margin-bottom: 20px;
+}
+
+.stat-card {
+    background-color: var(--card-bg);
+    border-radius: 12px;
+    padding: 16px;
+    box-shadow: var(--shadow);
+    border-left: 4px solid var(--primary);
+}
+
+.stat-value {
+    font-family: 'Noto Serif SC', serif;
+    font-size: 24px;
+    font-weight: 700;
+    color: var(--primary);
+    margin-bottom: 4px;
+}
+
+.stat-label {
+    font-size: 12px;
+    color: var(--text-secondary);
+}
+
+/* 标签页 */
+.tabs {
+    display: flex;
+    background-color: var(--card-bg);
+    border-radius: 12px;
+    padding: 4px;
+    margin-bottom: 20px;
+    box-shadow: var(--shadow);
+}
+
+.tab-btn {
+    flex: 1;
+    padding: 10px 14px;
+    border: none;
+    background: transparent;
+    border-radius: 8px;
+    font-size: 14px;
+    font-weight: 500;
+    color: var(--text-secondary);
+    cursor: pointer;
+    transition: all 0.2s;
+    font-family: inherit;
+}
+
+.tab-btn.active {
+    background-color: var(--primary);
+    color: white;
+}
+
+.tab-content {
+    display: none;
+}
+
+.tab-content.active {
+    display: block;
+}
+
+/* 列表筛选 */
+.list-filters {
+    display: flex;
+    gap: 12px;
+    margin-bottom: 16px;
+}
+
+.list-filters select {
+    padding: 8px 12px;
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    font-size: 14px;
+    background-color: var(--card-bg);
+    cursor: pointer;
+    color: var(--text);
+}
+
+.deposit-list {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+}
+
+.empty-state {
+    text-align: center;
+    color: var(--text-secondary);
+    padding: 40px 0;
+    font-size: 14px;
+}
+
+/* 存单卡片 */
+.deposit-card {
+    background-color: var(--card-bg);
+    border-radius: 12px;
+    padding: 16px;
+    box-shadow: var(--shadow);
+    position: relative;
+    transition: box-shadow 0.2s;
+}
+
+.deposit-card:hover {
+    box-shadow: var(--shadow-lg);
+}
+
+.deposit-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    margin-bottom: 12px;
+}
+
+.deposit-info {
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+}
+
+.deposit-principal {
+    font-family: 'Noto Serif SC', serif;
+    font-size: 22px;
+    font-weight: 700;
+    color: var(--text);
+}
+
+.deposit-meta {
+    font-size: 13px;
+    color: var(--text-secondary);
+}
+
+.deposit-badges {
+    display: flex;
+    gap: 6px;
+    flex-wrap: wrap;
+    justify-content: flex-end;
+}
+
+.deposit-badge {
+    padding: 4px 8px;
+    border-radius: 4px;
+    font-size: 11px;
+    font-weight: 500;
+    white-space: nowrap;
+}
+
+.badge-new {
+    background-color: var(--primary-light);
+    color: var(--primary-dark);
+}
+
+.badge-existing {
+    background-color: #f3f4f6;
+    color: #4b5563;
+}
+
+.badge-active {
+    background-color: #dcfce7;
+    color: #166534;
+}
+
+.badge-matured {
+    background-color: #fef3c7;
+    color: #92400e;
+}
+
+.badge-renewed {
+    background-color: #e0e7ff;
+    color: #4338ca;
+}
+
+.deposit-details {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 8px;
+    font-size: 13px;
+}
+
+.deposit-detail {
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
+}
+
+.deposit-detail label {
+    color: var(--text-secondary);
+    font-size: 12px;
+}
+
+.deposit-detail span {
+    color: var(--text);
+    font-weight: 500;
+}
+
+.text-expired { color: var(--danger); }
+.text-today { color: var(--danger); font-weight: 700; }
+.text-week { color: var(--warning); font-weight: 600; }
+.text-month { color: var(--primary); }
+.text-future { color: var(--text-secondary); }
+
+.deposit-actions {
+    display: flex;
+    gap: 8px;
+    margin-top: 12px;
+    padding-top: 12px;
+    border-top: 1px solid var(--border);
+}
+
+.deposit-actions button {
+    flex: 1;
+    padding: 8px;
+    border: none;
+    border-radius: 8px;
+    font-size: 13px;
+    font-weight: 500;
+    cursor: pointer;
+    transition: all 0.2s;
+    font-family: inherit;
+}
+
+.btn-edit {
+    background-color: var(--bg);
+    color: var(--text);
+}
+
+.btn-edit:hover {
+    background-color: var(--primary-light);
+}
+
+.btn-renew {
+    background-color: #dbeafe;
+    color: #1e40af;
+}
+
+.btn-renew:hover {
+    background-color: #bfdbfe;
+}
+
+.btn-delete {
+    background-color: #fee2e2;
+    color: var(--danger);
+}
+
+.btn-delete:hover {
+    background-color: #fecaca;
+}
+
+/* 十年现金流矩阵 */
+.calendar-header {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    margin-bottom: 16px;
+    font-weight: 600;
+    color: var(--text-secondary);
+}
+
+.cashflow-matrix {
+    overflow-x: auto;
+    background-color: var(--card-bg);
+    border-radius: 12px;
+    box-shadow: var(--shadow);
+    padding: 12px;
+}
+
+.calendar-matrix {
+    display: grid;
+    grid-template-columns: 60px repeat(12, minmax(72px, 1fr));
+    gap: 6px;
+    min-width: 960px;
+}
+
+.cal-row {
+    display: contents;
+}
+
+.cal-header .cal-year-cell,
+.cal-header .cal-month-header {
+    font-weight: 700;
+    color: var(--text);
+    background-color: var(--bg);
+    border-radius: 6px;
+}
+
+.cal-year-cell {
+    font-weight: 600;
+    color: var(--text-secondary);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 8px 4px;
+}
+
+.cal-month-header {
+    font-size: 12px;
+    text-align: center;
+    padding: 8px 4px;
+    color: var(--text-secondary);
+}
+
+.cal-cell {
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    padding: 8px 4px;
+    text-align: center;
+    min-height: 64px;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    gap: 2px;
+    background-color: #fafafa;
+}
+
+.cal-cell.has-data {
+    background: linear-gradient(135deg, #f0fdfa 0%, #ccfbf1 100%);
+    border-color: var(--primary);
+}
+
+.cal-cell-month {
+    font-size: 11px;
+    color: var(--text-secondary);
+}
+
+.cal-cell-amount {
+    font-size: 12px;
+    font-weight: 700;
+    color: var(--primary-dark);
+}
+
+.cal-cell-count {
+    font-size: 10px;
+    color: var(--text-secondary);
+}
+
+/* 到期提醒 */
+.reminder-list {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+}
+
+.reminder-card {
+    background-color: var(--card-bg);
+    border-radius: 12px;
+    padding: 16px;
+    box-shadow: var(--shadow);
+    border-left: 4px solid var(--primary);
+}
+
+.reminder-card.today {
+    border-left-color: var(--danger);
+    background-color: #fef2f2;
+}
+
+.reminder-card.week {
+    border-left-color: var(--warning);
+    background-color: #fffbeb;
+}
+
+.reminder-card.month {
+    border-left-color: var(--primary);
+}
+
+.reminder-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 8px;
+}
+
+.reminder-title {
+    font-size: 14px;
+    font-weight: 600;
+}
+
+.reminder-days {
+    font-size: 12px;
+    padding: 2px 8px;
+    border-radius: 4px;
+    background-color: var(--bg);
+    color: var(--text);
+    font-weight: 500;
+}
+
+.reminder-principal {
+    font-family: 'Noto Serif SC', serif;
+    font-size: 20px;
+    font-weight: 700;
+    color: var(--text);
+    margin-bottom: 4px;
+}
+
+.reminder-info {
+    font-size: 12px;
+    color: var(--text-secondary);
+}
+
+/* 按钮 */
+.btn {
+    padding: 8px 14px;
+    border: none;
+    border-radius: 8px;
+    font-size: 14px;
+    font-weight: 500;
+    cursor: pointer;
+    transition: all 0.2s;
+    font-family: inherit;
+    white-space: nowrap;
+}
+
+.btn-primary {
+    background-color: var(--primary);
+    color: white;
+}
+
+.btn-primary:hover {
+    background-color: var(--primary-dark);
+}
+
+.btn-secondary {
+    background-color: var(--bg);
+    color: var(--text);
+}
+
+.btn-secondary:hover {
+    background-color: var(--primary-light);
+}
+
+.btn-outline {
+    background-color: transparent;
+    border: 1px solid var(--border);
+    color: var(--text);
+}
+
+.btn-outline:hover,
+.btn-outline.active {
+    background-color: var(--primary-light);
+    border-color: var(--primary);
+    color: var(--primary-dark);
+}
+
+.btn-close {
+    background: none;
+    border: none;
+    font-size: 28px;
+    cursor: pointer;
+    color: var(--text-secondary);
+    padding: 0 4px;
+    line-height: 1;
+}
+
+/* 弹窗 */
+.modal-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background-color: rgba(0, 0, 0, 0.45);
+    z-index: 1000;
+}
+
+.modal {
+    position: fixed;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    background-color: var(--card-bg);
+    border-radius: 16px;
+    width: 90%;
+    max-width: 480px;
+    max-height: 90vh;
+    overflow-y: auto;
+    z-index: 1001;
+    box-shadow: var(--shadow-lg);
+}
+
+.modal-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 16px 20px;
+    border-bottom: 1px solid var(--border);
+}
+
+.modal-header h2 {
+    font-family: 'Noto Serif SC', serif;
+    font-size: 18px;
+    font-weight: 700;
+}
+
+.modal-body {
+    padding: 20px;
+}
+
+.form-row {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 12px;
+    margin-bottom: 12px;
+}
+
+.form-group {
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+}
+
+.form-group label {
+    font-size: 13px;
+    font-weight: 500;
+    color: var(--text);
+}
+
+.form-group input,
+.form-group select {
+    padding: 10px 12px;
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    font-size: 14px;
+    background-color: #fafafa;
+    color: var(--text);
+    font-family: inherit;
+}
+
+.form-group input:focus,
+.form-group select:focus {
+    outline: none;
+    border-color: var(--primary);
+    box-shadow: 0 0 0 3px rgba(13, 148, 136, 0.15);
+    background-color: var(--card-bg);
+}
+
+.form-actions {
+    display: flex;
+    gap: 12px;
+    margin-top: 20px;
+}
+
+.form-actions button {
+    flex: 1;
+    padding: 10px;
+}
+
+.radio-group {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+}
+
+.radio-group label {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    cursor: pointer;
+    font-size: 14px;
+}
+
+.radio-group input[type="radio"] {
+    width: 16px;
+    height: 16px;
+    accent-color: var(--primary);
+}
+
+/* 提醒弹窗内容 */
+.reminder-summary {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+}
+
+.reminder-section {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 10px 12px;
+    border-radius: 8px;
+    font-size: 14px;
+    background-color: var(--bg);
+}
+
+.reminder-section.today {
+    background-color: #fee2e2;
+    color: #991b1b;
+}
+
+.reminder-section.week {
+    background-color: #fef3c7;
+    color: #92400e;
+}
+
+.reminder-section.month {
+    background-color: #e0f2fe;
+    color: #075985;
+}
+
+.reminder-section strong {
+    font-weight: 600;
+}
+
+.hidden {
+    display: none !important;
+}
+
+/* 已存入开关（表单） */
+.toggle-row {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding: 6px 0;
+}
+
+.toggle-switch {
+    position: relative;
+    display: inline-block;
+    width: 44px;
+    height: 24px;
+}
+
+.toggle-switch input {
+    opacity: 0;
+    width: 0;
+    height: 0;
+}
+
+.toggle-slider {
+    position: absolute;
+    cursor: pointer;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background-color: #cbd5e1;
+    border-radius: 24px;
+    transition: 0.3s;
+}
+
+.toggle-slider::before {
+    position: absolute;
+    content: "";
+    height: 18px;
+    width: 18px;
+    left: 3px;
+    bottom: 3px;
+    background-color: white;
+    border-radius: 50%;
+    transition: 0.3s;
+}
+
+.toggle-switch input:checked + .toggle-slider {
+    background-color: var(--primary);
+}
+
+.toggle-switch input:checked + .toggle-slider::before {
+    transform: translateX(20px);
+}
+
+.toggle-label {
+    font-size: 14px;
+    color: var(--text);
+    font-weight: 500;
+}
+
+/* 利息与利率显示 */
+.interest-amount {
+    color: var(--primary-dark);
+    font-weight: 700;
+}
+
+.deposited-yes {
+    background-color: #dcfce7;
+    color: #166534;
+}
+
+.deposited-no {
+    background-color: #f1f5f9;
+    color: #64748b;
+}
+
+.not-deposited {
+    opacity: 0.75;
+}
+
+/* 列表中的标记已存入按钮 */
+.btn-toggle {
+    background-color: var(--bg);
+    color: var(--text);
+    border: 1px solid var(--border);
+}
+
+.btn-toggle:hover {
+    background-color: var(--primary-light);
+    border-color: var(--primary);
+}
+
+.btn-toggle.active {
+    background-color: var(--primary-light);
+    border-color: var(--primary);
+    color: var(--primary-dark);
+}
+
+/* 到期提醒中的本息明细 */
+.reminder-breakdown {
+    font-size: 13px;
+    color: var(--text-secondary);
+    font-weight: 400;
+}
+
+/* 响应式 */
+@media (max-width: 640px) {
+    .header {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 12px;
+    }
+
+    .header-actions {
+        width: 100%;
+        justify-content: flex-start;
+    }
+
+    .brand h1 {
+        font-size: 18px;
+    }
+
+    .main-content {
+        padding: 12px;
+    }
+
+    .stats-grid {
+        grid-template-columns: repeat(2, 1fr);
+    }
+
+    .deposit-details {
+        grid-template-columns: 1fr;
+    }
+
+    .form-row {
+        grid-template-columns: 1fr;
+    }
+
+    .calendar-matrix {
+        grid-template-columns: 48px repeat(12, minmax(64px, 1fr));
+        gap: 4px;
+        min-width: 820px;
+    }
+
+    .cal-cell-amount {
+        font-size: 11px;
+    }
+}

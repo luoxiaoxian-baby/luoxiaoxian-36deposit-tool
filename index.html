@@ -1,0 +1,207 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>36存单管理工具 · 极简本地版</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+SC:wght@400;500;700&family=Noto+Serif+SC:wght@500;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="styles.css">
+    <link rel="manifest" href="manifest.json">
+    <meta name="theme-color" content="#0d9488">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="default">
+</head>
+<body>
+    <div id="app">
+        <header class="header">
+            <div class="brand">
+                <h1>36存单管理工具</h1>
+                <span class="subtitle">极简本地版 · 无广告</span>
+            </div>
+            <div class="header-actions">
+                <button id="enableNotifyBtn" class="btn btn-outline" title="开启后可在到期时接收浏览器通知">开启通知</button>
+                <button class="btn btn-secondary" onclick="showBatchModal()">批量改额</button>
+                <button class="btn btn-primary" onclick="showAddModal()">新增存单</button>
+            </div>
+        </header>
+
+        <main class="main-content">
+            <details class="plan-card">
+                <summary>资金规划备注</summary>
+                <div class="plan-body">
+                    <p><strong>现有资金：</strong>活期 5,000 元；2026-08-22 到期 70,000 元；2026-12-12 到期 10,000 元；多笔 2029 年小额存量存单。</p>
+                    <p><strong>启动安排：</strong>2026-08-22 的 70,000 元到账后正式启动，留存 10,000 元作为永久活期应急金，剩余 60,000 元作为 36 存单建设资金；2026-12 到期的 10,000 元作为后备增补资金，不纳入基础预算。</p>
+                    <p><strong>36 存单周期：</strong>2026 年 8 月 — 2027 年 6 月，共 11 个月，每月开立 1 年期、2 年期、3 年期存单各一张；单张预设金额 1,800 元，可随时批量调整。</p>
+                    <p><strong>续存规则：</strong>新 36 存单中 1 年期、2 年期到期后本金续存 3 年期；3 年期到期滚动续存 3 年期。2029 年存量存单到期后本金滚动存入 3 年期定期。</p>
+                </div>
+            </details>
+
+            <section class="stats-grid">
+                <div class="stat-card">
+                    <div class="stat-value" id="totalPrincipal">¥0</div>
+                    <div class="stat-label">总本金</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-value" id="totalCount">0</div>
+                    <div class="stat-label">总存单数量</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-value" id="monthDue">¥0</div>
+                    <div class="stat-label">累计已产生利息</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-value" id="yearDue">¥0</div>
+                    <div class="stat-label">总本息和</div>
+                </div>
+            </section>
+
+            <nav class="tabs" role="tablist">
+                <button class="tab-btn active" onclick="switchTab('list')" role="tab" aria-selected="true">存单列表</button>
+                <button class="tab-btn" onclick="switchTab('reminder')" role="tab" aria-selected="false">到期提醒</button>
+                <button class="tab-btn" onclick="switchTab('calendar')" role="tab" aria-selected="false">十年现金流</button>
+            </nav>
+
+            <section id="tab-list" class="tab-content active" role="tabpanel">
+                <div class="list-filters">
+                    <select id="filterStatus" onchange="renderList()">
+                        <option value="">全部状态</option>
+                        <option value="active">存续</option>
+                        <option value="matured">已到期</option>
+                        <option value="renewed">已续存</option>
+                    </select>
+                    <select id="filterType" onchange="renderList()">
+                        <option value="">全部属性</option>
+                        <option value="new">新36存单</option>
+                        <option value="existing">现有存单</option>
+                    </select>
+                </div>
+                <div id="depositList" class="deposit-list"></div>
+            </section>
+
+            <section id="tab-reminder" class="tab-content" role="tabpanel">
+                <div id="reminderList" class="reminder-list"></div>
+            </section>
+
+            <section id="tab-calendar" class="tab-content" role="tabpanel">
+                <div class="calendar-header">
+                    <span>未来 10 年每月到期现金流</span>
+                </div>
+                <div id="monthlyCashFlow" class="cashflow-matrix"></div>
+            </section>
+        </main>
+    </div>
+
+    <div id="modal-overlay" class="modal-overlay hidden" onclick="closeAllModals()"></div>
+
+    <div id="modal" class="modal hidden">
+        <div class="modal-header">
+            <h2 id="modalTitle">新增存单</h2>
+            <button class="btn-close" onclick="closeModal()">&times;</button>
+        </div>
+        <div class="modal-body">
+            <form id="depositForm">
+                <div class="form-row">
+                    <div class="form-group">
+                        <label for="formDepositDate">存入日期</label>
+                        <input type="date" id="formDepositDate" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="formTerm">存单期限（年）</label>
+                        <input type="number" id="formTerm" min="0.1" step="0.1" required placeholder="如 1、2、3、0.5">
+                    </div>
+                </div>
+                <div class="form-row">
+                    <div class="form-group">
+                        <label for="formPrincipal">存入本金（元）</label>
+                        <input type="number" id="formPrincipal" min="1" step="1" required placeholder="如 1800">
+                    </div>
+                    <div class="form-group">
+                        <label for="formRate">年利率（%）</label>
+                        <input type="number" id="formRate" min="0" step="0.01" required placeholder="如 2.5">
+                    </div>
+                </div>
+                <div class="form-row">
+                    <div class="form-group">
+                        <label for="formType">存单属性</label>
+                        <select id="formType" required>
+                            <option value="new">新36存单</option>
+                            <option value="existing">现有存单</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label for="formStatus">存单状态</label>
+                        <select id="formStatus" required>
+                            <option value="active">存续</option>
+                            <option value="matured">已到期</option>
+                            <option value="renewed">已续存</option>
+                        </select>
+                    </div>
+                </div>
+                <div class="form-row">
+                    <div class="form-group">
+                        <label for="formRule">到期续存规则</label>
+                        <select id="formRule" required>
+                            <option value="renew3">到期本金续存 3 年期</option>
+                            <option value="renewSame">到期滚动续存同期限</option>
+                            <option value="liquid">到期划入流动资金（不续存）</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label>存入状态</label>
+                        <div class="toggle-row">
+                            <label class="toggle-switch">
+                                <input type="checkbox" id="formDeposited">
+                                <span class="toggle-slider"></span>
+                            </label>
+                            <span id="formDepositedLabel" class="toggle-label">未存入</span>
+                        </div>
+                    </div>
+                </div>
+                <div class="form-actions">
+                    <button type="button" class="btn btn-secondary" onclick="closeModal()">取消</button>
+                    <button type="submit" class="btn btn-primary">保存</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <div id="batchModal" class="modal hidden">
+        <div class="modal-header">
+            <h2>批量修改本金</h2>
+            <button class="btn-close" onclick="closeBatchModal()">&times;</button>
+        </div>
+        <div class="modal-body">
+            <div class="form-group" style="margin-bottom: 12px;">
+                <label for="batchAmount">新本金金额（元）</label>
+                <input type="number" id="batchAmount" min="1" step="1" placeholder="如 1800">
+            </div>
+            <div class="form-group" style="margin-bottom: 16px;">
+                <label>作用范围</label>
+                <div class="radio-group">
+                    <label><input type="radio" name="batchScope" value="all" checked> 全部存单</label>
+                    <label><input type="radio" name="batchScope" value="new"> 仅新36存单</label>
+                    <label><input type="radio" name="batchScope" value="existing"> 仅现有存单</label>
+                </div>
+            </div>
+            <div class="form-actions">
+                <button class="btn btn-secondary" onclick="closeBatchModal()">取消</button>
+                <button class="btn btn-primary" onclick="applyBatchAmount()">应用</button>
+            </div>
+        </div>
+    </div>
+
+    <div id="reminderModal" class="modal hidden" style="z-index: 1002;">
+        <div id="reminderModalContent"></div>
+    </div>
+
+    <script src="data.js"></script>
+    <script src="app.js"></script>
+    <script>
+        if ('serviceWorker' in navigator) {
+            navigator.serviceWorker.register('sw.js').catch(() => {});
+        }
+    </script>
+</body>
+</html>
